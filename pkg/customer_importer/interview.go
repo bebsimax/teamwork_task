@@ -35,11 +35,11 @@ func (ci *CustomerImporter) Load(path string) ([]*DomainCount, error) {
 }
 
 func (ci *CustomerImporter) process(r io.Reader, failFast bool) ([]*DomainCount, error) {
-	m := map[string]int{}
-
 	csvReader := csv.NewReader(r)
-	csvReader.FieldsPerRecord = 5
+	csvReader.FieldsPerRecord = models.CustomerFieldsPerLine
 	curLine := 1
+
+	m := map[string]int{}
 
 	for {
 		curLine++
@@ -57,7 +57,10 @@ func (ci *CustomerImporter) process(r io.Reader, failFast bool) ([]*DomainCount,
 			continue
 		}
 
-		c := models.NewCustomer(line)
+		c, err := models.NewCustomerFromLine(line)
+		if err != nil {
+			return nil, fmt.Errorf("new customer: %w", err)
+		}
 
 		err = c.Validate()
 		if err != nil {

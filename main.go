@@ -11,7 +11,10 @@ import (
 func main() {
 	logger := log.New(os.Stdout, "", log.Ldate|log.Ltime)
 	c := customerimporter.CustomerImporter{Log: logger}
-	s, _ := c.Load("customers.csv")
+	s, err := c.Load("customers.csv")
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	for i := 0; i < 5; i++ {
 		fmt.Println(*s[i])

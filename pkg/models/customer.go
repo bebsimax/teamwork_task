@@ -5,6 +5,8 @@ import (
 	"regexp"
 )
 
+const CustomerFieldsPerLine = 5
+
 type Customer struct {
 	FirstName string
 	LastName  string
@@ -27,10 +29,14 @@ func (c *Customer) Validate() error {
 	return nil
 }
 
-func NewCustomer(row []string) *Customer {
-	return &Customer{FirstName: row[0],
-		LastName:  row[1],
-		Email:     row[2],
-		Gender:    row[3],
-		IPAddress: row[4]}
+func NewCustomerFromLine(line []string) (*Customer, error) {
+	if len(line) != CustomerFieldsPerLine {
+		return nil, fmt.Errorf("unexpected number of fields in line, expected: %d, got: %d", CustomerFieldsPerLine, len(line))
+	}
+
+	return &Customer{FirstName: line[0],
+		LastName:  line[1],
+		Email:     line[2],
+		Gender:    line[3],
+		IPAddress: line[4]}, nil
 }
